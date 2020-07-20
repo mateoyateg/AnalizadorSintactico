@@ -76,13 +76,15 @@ public class Interfaz implements ActionListener{
                     case "INSERT":
                         insert(cadenaSeparada);
                         break;
-                    case "CREATE":
-                        break;
                     case "DELETE":
+                        delete(cadenaSeparada);
                         break;
                     case "UPDATE":
+                        update(cadenaSeparada);
                         break;
                     case "SELECT":
+                        break;
+                    case "CREATE":
                         break;
                     default:
                         JOptionPane.showMessageDialog(null, "Expresión errada: La primera palabra no es un statement");
@@ -91,6 +93,48 @@ public class Interfaz implements ActionListener{
             } else {
                 JOptionPane.showMessageDialog(null, "El campo de texto está vacio");
             }
+        }
+    }
+    
+    public void update(String[] cadenaSeparada){
+        if (verificarNombre(cadenaSeparada[1]) && cadenaSeparada.length > 2){
+            System.out.println("El nombre de la tabla es correcto y hay algo después");
+            
+            if (cadenaSeparada[2].equals("SET") && cadenaSeparada.length > 3){
+                System.out.println("La expresión contiene SET y hay algo después");
+                
+                if (verificarIngresos(cadenaSeparada[3]) && cadenaSeparada.length > 4){
+                    System.out.println("Los ingresos estan bien escritos");
+                    
+                    if (cadenaSeparada[4].equals("WHERE") && cadenaSeparada.length > 4) {
+                        System.out.println("La expresión contiene WHERE y hay algo después");
+
+                        if (cadenaSeparada.length > 6) {
+                            cadenaSeparada[5] = cadenaSeparada[5] + cadenaSeparada[6];
+                            System.out.println("Concatene YEI");
+                        }
+
+                        if (verificarCondicion(cadenaSeparada[5])) {
+                            System.out.println("La expresion es valida");
+                            JOptionPane.showMessageDialog(null, "Expresion VALIDA");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "La condicion NO ES VALIDA");
+                        }
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "La expresion no contiene WHERE o no tiene nada despues de este");
+                    }
+                    
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null, "Expresion invalida por condiciones");
+                }
+                
+            } else {
+                JOptionPane.showMessageDialog(null, "Expresion sin un SET");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Expresion errada en el nombre de la tabla");
         }
     }
     
@@ -129,6 +173,138 @@ public class Interfaz implements ActionListener{
         } else {
             JOptionPane.showMessageDialog(null, "Expresion errada en la expresion INTO");
         }
+    }
+    
+    public void delete(String[] cadenaSeparada) {
+        if (cadenaSeparada[1].equals("FROM") && cadenaSeparada.length > 2){
+            System.out.println("La expresión contiene FROM y hay algo después");
+            
+            if (verificarNombre(cadenaSeparada[2]) && cadenaSeparada.length > 3) {
+                System.out.println("Hay algo más, la expresion no para aca");
+                
+                if (cadenaSeparada[3].equals("WHERE") && cadenaSeparada.length > 4){
+                    System.out.println("La expresión contiene WHERE y hay algo después");
+                    
+                    if (cadenaSeparada.length > 5){
+                        cadenaSeparada[4] = cadenaSeparada[4] + cadenaSeparada[5];
+                        System.out.println("Concatene YEI");
+                    }
+                    
+                    if (verificarCondicion(cadenaSeparada[4])) {
+                        System.out.println("La expresion es valida");
+                        JOptionPane.showMessageDialog(null, "Expresion VALIDA");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "La condicion NO ES VALIDA");
+                    }
+                    
+                } else {
+                    JOptionPane.showMessageDialog(null, "La expresion no contiene WHERE o no tiene nada despues de este");
+                }
+                
+            } else if (verificarDeleteCorto(cadenaSeparada[2])) {
+                JOptionPane.showMessageDialog(null, "Expresion VALIDA");
+            } else {
+                JOptionPane.showMessageDialog(null, "El nombre de la tabla no es valido o faltan mas datos...");
+            }
+            
+        } else {
+            JOptionPane.showMessageDialog(null, "Expresion errada en la expresion FROM");
+        }
+    }
+    
+    public boolean verificarIngresos(String tbSet){
+        String[] separaComas = tbSet.split(",");
+        
+        for (int i=0; i<separaComas.length; i++){
+            return verificarSeteada(separaComas[i]);
+        }
+        
+        return true;
+        
+    }
+    
+    public boolean verificarSeteada(String tbCondicion){
+        System.out.println("Condicion a verificar: " + tbCondicion);
+        System.out.println("");
+        Pattern pat = Pattern.compile("^[^\\d]*.*=[\"']*.*[\"']*");
+        Matcher mat = pat.matcher(tbCondicion);
+        
+        if (mat.matches()){
+            System.out.println("La estructura de la condicion es correcta");
+            
+            pat = Pattern.compile("UPDATE|CREATE|SELECT|INSERT|DELETE|"
+                    + "\\(|\\)|/|&|#|>|<|\\{|\\}");
+            mat = pat.matcher(tbCondicion);
+
+            if (!mat.find()) {
+                System.out.println(tbCondicion + ": No contiene palabras reservadas");
+                return true;
+
+            } else {
+                System.out.println("ERROR: " + tbCondicion + " contiene palabras reservadas");
+                return false;
+            }
+            
+        } else {
+            System.out.println("La estructura de la condicion no es correcta");
+            return false;
+        }
+    }
+    
+    public boolean verificarCondicion(String tbCondicion){
+        System.out.println("Condicion a verificar: " + tbCondicion);
+        System.out.println("");
+        Pattern pat = Pattern.compile("^[^\\d].*=[\"']*.*[\"']*;$");
+        Matcher mat = pat.matcher(tbCondicion);
+        
+        if (mat.matches()){
+            System.out.println("La estructura de la condicion es correcta");
+            
+            pat = Pattern.compile("UPDATE|CREATE|SELECT|INSERT|DELETE|"
+                    + "\\(|\\)|/|&|#|>|<|\\{|\\}");
+            mat = pat.matcher(tbCondicion);
+
+            if (!mat.find()) {
+                System.out.println(tbCondicion + ": No contiene palabras reservadas");
+                return true;
+
+            } else {
+                System.out.println("ERROR: " + tbCondicion + " contiene palabras reservadas");
+                return false;
+            }
+            
+        } else {
+            System.out.println("La estructura de la condicion no es correcta");
+            return false;
+        }
+    }
+    
+    public boolean verificarDeleteCorto(String tbName) {
+
+        //Verifica que el nombre no contenta palabras reservadas
+        Pattern pat = Pattern.compile("UPDATE|CREATE|SELECT|INSERT|DELETE|"
+                + "\\(|\\)|\\+|\\-|/|\\*|\\\"|=|&|#|>|<|\\^|'|\\{|\\}|%");
+        //Pattern pat = Pattern.compile("^[^\\d]{0,}.[^INSERT,CREATE,DELETE,if,else,for].");
+        Matcher mat = pat.matcher(tbName);
+        //Esta bien
+        if (!mat.find()) {
+            System.out.println(tbName + ": No contiene palabras reservadas");
+            pat = Pattern.compile("^[^\\d]*.*[;]$");
+            mat = pat.matcher(tbName);
+            if (mat.matches()) {
+                System.out.println(tbName + ": No empieza por un digito y termina en punto y coma");
+                return true;
+                
+            } else {
+                System.out.println(tbName + ": Empieza por un digito o no tiene punto y coma final");
+                return false;
+            }
+
+        } else {
+            System.out.println("ERROR: " + tbName + " contiene palabras reservadas");
+            return false;
+        }
+
     }
     
     public boolean verificarNombre(String tbName) {
@@ -172,7 +348,6 @@ public class Interfaz implements ActionListener{
 
             pat = Pattern.compile("UPDATE|CREATE|SELECT|INSERT|DELETE|"
                     + "\\(|\\)|/|\\\"|&|#|>|<|'|\\{|\\}");
-            //Pattern pat = Pattern.compile("^[^\\d]{0,}.[^INSERT,CREATE,DELETE,if,else,for].");
             mat = pat.matcher(tbValores);
 
             if (!mat.find()) {
