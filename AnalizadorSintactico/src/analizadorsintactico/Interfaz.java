@@ -83,6 +83,7 @@ public class Interfaz implements ActionListener{
                         update(cadenaSeparada);
                         break;
                     case "SELECT":
+                        select(cadenaSeparada);
                         break;
                     case "CREATE":
                         break;
@@ -95,7 +96,52 @@ public class Interfaz implements ActionListener{
             }
         }
     }
-    
+    public void select(String[] cadenaSeparada) {
+        String valorTabla;
+        if(cadenaSeparada[1].equals("*") && cadenaSeparada.length> 2){
+            System.out.println("El nombre de la sentencia es correcto y hay algo después");
+            
+            if(cadenaSeparada[2].equals("FROM") && cadenaSeparada.length >3){
+               System.out.println("El nombre de la sentencia es correcto y hay algo después");
+               if(verificarNombre(cadenaSeparada[3]) ) {
+               System.out.println("El nombre de la tabla es correcto");
+               valorTabla = cadenaSeparada[3];
+                   if(cadenaSeparada.length >4 && cadenaSeparada[4].equals("WHERE") ) {
+                       if(verificarNombre(cadenaSeparada[5]) && cadenaSeparada.length >5){
+                           if(cadenaSeparada[5] == valorTabla) {
+                               if(cadenaSeparada[6].equals('=') && cadenaSeparada.length >6 ) {
+                                   if(verificarNombre(cadenaSeparada[7]) && cadenaSeparada.length >7) {
+                                      System.out.println("Expresion valida");
+ 
+                                   } else{
+                                       JOptionPane.showMessageDialog(null, "Falta valor de comparacion ");
+
+                                   }
+                               } else {
+                                   JOptionPane.showMessageDialog(null, "Falta expresion de comparacion ");
+
+                               }
+                           } else{
+                               JOptionPane.showMessageDialog(null, "No existe referencia a esa tabla ");
+                           }
+                       }else {
+                           JOptionPane.showMessageDialog(null, "Expresion tiene palabras reservadas ");
+
+                       }
+                   } else {
+                      System.out.println("Expresion valida");
+                   }
+               } else {
+                   JOptionPane.showMessageDialog(null, "Expresion tiene palabras reservadas ");
+               }
+            } else {
+                JOptionPane.showMessageDialog(null, "Expresion no contiene la setencia FROM ");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Expresion sin ");
+        
+        }
+    }
     public void update(String[] cadenaSeparada){
         if (verificarNombre(cadenaSeparada[1]) && cadenaSeparada.length > 2){
             System.out.println("El nombre de la tabla es correcto y hay algo después");
@@ -250,7 +296,22 @@ public class Interfaz implements ActionListener{
             return false;
         }
     }
-    
+    /*
+    public boolean verificarCamposTabla(String[] valores) {
+        int ultimoValor;
+        if(valores[1].equals("*")){
+            return true;
+        }
+        else {
+            for(int i=0; i<valores.length; i++) {
+                if(valores[i].equals("FROM")) {
+                    ultimoValor = i;
+                }
+            }
+            
+        }
+    }
+    */
     public boolean verificarCondicion(String tbCondicion){
         System.out.println("Condicion a verificar: " + tbCondicion);
         System.out.println("");
