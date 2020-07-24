@@ -108,8 +108,8 @@ public class Interfaz implements ActionListener{
                valorTabla = cadenaSeparada[3];
                    if(cadenaSeparada.length >4 && cadenaSeparada[4].equals("WHERE") ) {
                        if(verificarNombre(cadenaSeparada[5]) && cadenaSeparada.length >5){
-                           if(cadenaSeparada[5] == valorTabla) {
-                               if(cadenaSeparada[6].equals('=') && cadenaSeparada.length >6 ) {
+                           if(cadenaSeparada[5].equals(valorTabla)) {
+                               if(cadenaSeparada[6].equals("=") && cadenaSeparada.length >6 ) {
                                    if(verificarNombre(cadenaSeparada[7]) && cadenaSeparada.length >7) {
                                       System.out.println("Expresion valida");
  
