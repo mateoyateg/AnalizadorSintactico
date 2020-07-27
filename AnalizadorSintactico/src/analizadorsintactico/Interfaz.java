@@ -86,6 +86,7 @@ public class Interfaz implements ActionListener{
                         select(cadenaSeparada);
                         break;
                     case "CREATE":
+                        create(cadenaSeparada);
                         break;
                     default:
                         JOptionPane.showMessageDialog(null, "Expresión errada: La primera palabra no es un statement");
@@ -101,7 +102,7 @@ public class Interfaz implements ActionListener{
         int valorFrom = 0;
         
         Boolean error = false;
-        if( cadenaSeparada.length> 1){
+        if( cadenaSeparada.length> 1 && cadenaSeparada[0].equals("SELECT")){
             System.out.println("El nombre de la sentencia es correcto y hay algo después");
             for(int i=1; i<cadenaSeparada.length; i++) {
                 if(cadenaSeparada[i].equals("FROM")){
@@ -161,11 +162,74 @@ public class Interfaz implements ActionListener{
             
         }
     }
-    /*
-    public void create(String[], cadenaSeparada) {
-        
+    
+    public void create(String[] cadenaSeparada) {
+        int valorCierre;
+        if(cadenaSeparada.length > 1 && cadenaSeparada[0].equals("CREATE") ){
+            if(cadenaSeparada[1].equals("TABLE")) {
+                if(cadenaSeparada.length> 2 && verificarNombre(cadenaSeparada[2])) {
+                    if(cadenaSeparada.length>3 && cadenaSeparada[3].startsWith("{")){
+                        
+                        if(verficarDeclaraciones(cadenaSeparada)) {
+                            JOptionPane.showMessageDialog(null, "Expresion valida");
+                        }
+                    } else {
+                                        JOptionPane.showMessageDialog(null, "No ha declarado bien los parametros");
+
+                    }                       
+                     
+                } else {
+                                     JOptionPane.showMessageDialog(null, "Palabra reservada ");
+
+                }
+            } else {
+                                 JOptionPane.showMessageDialog(null, "No contiene la palabra TABLA ");
+
+            }
+        } else {
+                             JOptionPane.showMessageDialog(null, "Solo hay una palabra reservada, continue con la expresion ");
+
+        }
     }
-*/
+    
+    public boolean verficarDeclaraciones(String[] cadena) {
+        String cad=cadena[3];
+        String[] nueva = new String[]{};
+        String[] otra = new String[]{};
+        Boolean condicion = false;
+        Boolean otraCondicion = false;
+        for(int x=4; x< cadena.length; x++){
+             cad+=" "+cadena[x];
+         }
+        String requiredString = cad.substring(cad.indexOf("{") + 1, cad.indexOf("}"));
+        if(requiredString.contains(";")) {
+            condicion = false;
+        }
+        nueva = requiredString.split(",");
+        
+        for(int y= 0; y< nueva.length; y++) {
+            otra = nueva[y].split(" ");
+            System.out.println(otra.length);
+            if(otra.length < 2) {
+                System.out.println("no contiene una definicion de variable");
+                condicion = false;
+            } else {
+                
+                //Pattern pat = Pattern.compile("CHAR|BINARY|BOOL|SMALLINT|INTEGER|FLOAT");
+                //Matcher mat = pat.matcher(otra[1]);
+                System.out.println(otra[1]);
+                if(otra[1].contains("CHAR")) {
+                    System.out.println(" contiene tipos de variable");
+                    otraCondicion = true;
+                } else {
+                    System.out.println("no contiene tipos de variable");
+                    otraCondicion = false;
+                }
+            }
+        }
+        return !condicion? condicion: otraCondicion;
+    }
+
     public void update(String[] cadenaSeparada){
         if (verificarNombre(cadenaSeparada[1]) && cadenaSeparada.length > 2){
             System.out.println("El nombre de la tabla es correcto y hay algo después");
